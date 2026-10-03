@@ -1,0 +1,15 @@
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# data (large, regenerable)
+data/raw/*.parquet
+data/cache/
+
+# env / keys
+.env
+
+# tooling
+.pytest_cache/
+uv.lock
