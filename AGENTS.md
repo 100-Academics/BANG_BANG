@@ -12,6 +12,12 @@ README.md
 
 AGENTS.md
 
+DOCS/
+
+DOCS/
+
+Communicate.md (there may be other agents in this repo. if you NEED to communicate. you can do this here)
+
 
 
 WHAT THIS DOES/WILL DO:
@@ -54,6 +60,7 @@ PREDICTION BASELINES TO COMPARE AGAINST:
 FOR TEAMS:
 
 
+
 Home Team Advantage / Naïve Winner: Predict the home team wins every time (historically wins \~58–60% of NBA games). Any model failing to beat 60% accuracy on straight-up game outcomes is worse than guessing home-court advantage.
 
 Simple ELO / Net Rating: Calculate team strength using rolling Net Rating (Offensive Rating minus Defensive Rating) adjusted for rest days and venue.
@@ -76,12 +83,13 @@ Public Analytics Models:
 
 
 
-&#x20;   FiveThirtyEight (historical) / DRatings / DunksAndThreeds (EPM): Check model log-loss and Brier score against established public rating 
+&#x20;   FiveThirtyEight (historical) / DRatings / DunksAndThreeds (EPM): Check model log-loss and Brier score against established public rating
 systems.
 
 
 
 FOR PLAYERS:
+
 
 
 Per-36 / Per-Minute Efficiency Model:Formula: $\\text{Predicted Output} = \\text{Weighted Stat per Minute} \\times \\text{Projected Minutes}$Why it matters: Playing time (minutes) accounts for \~70–80% of player production variance. A model predicting points directly without first predicting minutes will fail to beat this baseline.
@@ -109,10 +117,4 @@ Check median projections against established Daily Fantasy Sports (DFS) platform
 
 
 &#x20;   NumberFire / SaberSim
-
-
-
-
-
-
 
