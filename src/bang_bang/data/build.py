@@ -42,6 +42,8 @@ def build_games(season: str) -> pl.DataFrame:
           ["PTS", "FGM", "FG3M", "FG3A", "OREB", "TOV", "FTA", "REB", "AST", "STL", "BLK"]],
     ])
     t = _with_poss(t)
+    # nba_api returns exact-duplicate rows for in-progress seasons (hit 2026-27)
+    t = t.unique(subset=["game_id", "team_id"])
 
     s = sched.select(["game_id", "home_team_id", "away_team_id", "status"])
 
@@ -83,6 +85,7 @@ def build_player_games(season: str) -> pl.DataFrame:
           for c in ["MIN", "FGM", "FGA", "FG3M", "FG3A", "FTM", "FTA",
                     "OREB", "DREB", "REB", "AST", "TOV", "STL", "BLK", "PTS"]],
     ])
+    out = out.unique(subset=["game_id", "player_id"])  # in-progress seasons double rows
     out = out.sort("game_date", "player_id")
     out.write_parquet(p)
     return out

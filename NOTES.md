@@ -15,8 +15,8 @@ Keep this current — it exists so no experiment gets re-run.
 - Data cached to `data/raw/*.parquet` (gitignored). Fetch: `uv run python scripts/fetch_seasons.py`
   (2023-24, 2024-25, 2025-26; ~5 min, 91 API calls/season batch)
 - **Holdout discipline: 2025-26 is the clean holdout season. 2024-25 in-sample for diagnosis.**
-  2026-27 (live) is fetched on demand.
-- Today = 2026-10-03. 2025-26 is fully complete (incl. playoffs through 2026-06-13).
+  2026-27 (live) fetched via `scripts/fetch_live.py`.
+- Today = 2026-10-26. 2026-27 in progress (104 games played; 30 teams, 82-86 games each).
 
 ## Layout
 - `src/bang_bang/data/fetch.py` — nba_api fetchers (schedule, team logs, per-team player logs, season stats w/ AGE)
@@ -25,6 +25,13 @@ Keep this current — it exists so no experiment gets re-run.
 - `src/bang_bang/baselines/player_baselines.py` — per36_flat, per36_decay, marcel
 - `src/bang_bang/eval/metrics.py` — acc/brier/logloss/bet-EV (teams); MAE/Spearman (players)
 - `scripts/eval_team.py [season]`, `scripts/eval_player_window.py <season> <prior> <asof>`
+- **Live entry points (added 2026-10-26):**
+  - `scripts/fetch_live.py [season] [refresh]` — fetch an in-progress season (default 2026-27)
+  - `scripts/predict.py [season] [asof]` — A/B-validates team config on the prior season,
+    walks ELO to asof, predicts all remaining games + per-team proj. wins; player 30-day
+    projections (marcel, per36_decay once >=8 games)
+  - `scripts/board.py [season]` — renders `data/predictions/board_{season}.html` widget
+  - Outputs in `data/predictions/` (gitignored): team_preds, team_preds_games, player_preds
 
 ## Baselines — settled results
 
@@ -37,6 +44,21 @@ Keep this current — it exists so no experiment gets re-run.
 
 - ELO config: K=20*(1+(MoV-10)/20) clamped [10,30], +100 home, rest bonus 30/day past 3 days off capped 150.
 - Both seasons clear the AGENTS.md 60% bar and are consistent.
+
+### Teams — live model A/B (2026-10-26, on 2025-26 holdout, warmup=10g)
+| arm | acc | brier | betEV/u |
+|---|---|---|---|
+| fresh+unfiltered | 0.648 | 0.2156 | +0.295 |
+| fresh+filtered | 0.649 | 0.2154 | +0.298 |
+| carry+unfiltered | 0.671 | 0.2168 | +0.343 |
+| **carry+filtered (ships)** | **0.672** | 0.2169 | **+0.344** |
+
+- fresh+unfiltered exactly reproduces the established 0.648/+0.295 → pipeline validated.
+- **Carrying ELO ratings across seasons improves the holdout** (+2.4pp acc, +0.049/u) → live
+  predictions start from end-of-prior-season ratings (walked from pre-prior).
+- "filtered" = drop non-NBA junk games from the walk (see data hygiene below); neutral-to-slight.
+- Est. spread on the board = MoV linear calibration on ELO diff (no home/rest bonus),
+  ~29 ELO per point over the 2-season walk. Not a market line.
 - **Vegas line baseline NOT yet implemented** — ESPN public API does NOT expose historical
   spreads/totals (scoreboard `odds` empty, boxscore 404s for past games). Options: balldontlie
   (needs key; has odds endpoints), or scraping. **This is the #1 missing baseline.**
@@ -61,6 +83,19 @@ Multi-window stability (confirms the default):
 
 per36_decay best-or-tie on MAE and best Spearman in all 3 windows. Marcel competitive on
 2024-25 only (MAE 39.9 vs 41.1 but ρ 0.764 vs 0.839). Default stays per36_decay (hl=14d).
+
+## Data hygiene (found 2026-10-26, all handled in fetch.py/build.py/predict.py)
+- **nba_api returns exact-duplicate rows for in-progress seasons** (2026-27: every team-log
+  and player-log row doubled). Deduped: fetch.py `.unique()` on logs; build.py
+  `.unique(subset=[game_id,team_id])` / `[game_id,player_id]`. Old seasons were clean.
+- **ScheduleLeagueV2 includes non-NBA games**: 2025-26 had 12 (Oct preseason vs
+  Loong-Lions/Jerusalem B.C./United + Feb "Team Melo/Stripes/Stars/World" 3x3-style),
+  2026-27 has 1 (Trail Blazers vs "Lions"). games.parquet also includes playoffs + these
+  junk games. predict.py filters walks to NBA teams = teams with >=15 scheduled games that season.
+- Schedule has **TBD placeholder rows** (team ids 0, null names, Dec dates) and future-game
+  `status` carries the tip-off time ("7:00 pm ET"), not "Scheduled". Use
+  `status.str.starts_with("Final")` — "Final/OT" exists (5 games in 2026-27).
+- 2026-27: 30 teams, 82-86 games each (1157 remaining + 104 played asof 10/26).
 
 ## Bugs found & fixed (do not re-investigate)
 - nba_api `gameDate` is a **string** `MM/DD/YYYY HH:MM:SS` (schedule) / ISO (logs) — cast via strptime.

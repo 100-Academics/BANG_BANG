@@ -1,0 +1,132 @@
+<!doctype html><html><head><meta charset='utf-8'><style>
+
+body { color: var(--foreground); font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+h1 { font-size: 18px; margin: 0 0 2px; font-weight: 700; }
+.sub { color: var(--muted-foreground); font-size: 12px; margin-bottom: 4px; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em;
+     color: var(--muted-foreground); margin: 20px 0 6px;
+     border-bottom: 1px solid var(--border); padding-bottom: 4px; font-weight: 600; }
+table { border-collapse: collapse; width: 100%; }
+th { text-align: left; font-size: 10.5px; color: var(--muted-foreground);
+     text-transform: uppercase; letter-spacing: .04em;
+     padding: 3px 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+td { padding: 3.5px 8px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.strong { font-weight: 600; }
+.muted { color: var(--muted-foreground); }
+.pill { display: inline-block; min-width: 34px; text-align: center;
+        border-radius: 4px; padding: 0 5px; font-size: 11px; font-weight: 600;
+        color: var(--foreground); background: var(--card); border: 1px solid var(--border); }
+.barwrap { display: flex; align-items: center; gap: 6px; min-width: 130px; }
+.bar { height: 8px; border-radius: 4px; background: var(--accent); }
+.track { flex: 1; height: 8px; border-radius: 4px; background: var(--card);
+         border: 1px solid var(--border); overflow: hidden; }
+.foot { color: var(--muted-foreground); font-size: 11px; margin-top: 16px;
+        border-top: 1px solid var(--border); padding-top: 8px; }
+
+</style></head><body>
+<h1>BANG_BANG &middot; 2026-27 live projections</h1>
+<div class='sub'>asof 2026-10-26 &middot; teams: elo_538 (ratings carried across seasons) &middot; players: marcel + per36_decay, 30-day windows &middot; 1157 games left on schedule</div>
+<h2>Projected final standings</h2>
+<table><tr><th>team</th><th class='num'>record</th><th class='num'>proj. remaining</th><th class='num'>proj. final</th><th class='num'>proj. wins</th></tr>
+<tr><td class='strong'>Thunder</td><td class='num muted'>4-4</td><td class='num'>61.0 - 16.0</td><td class='num'>65.0 - 20.0</td><td class='num strong'>65.0</td></tr>
+<tr><td class='strong'>Pistons</td><td class='num muted'>6-1</td><td class='num'>56.9 - 20.1</td><td class='num'>62.9 - 21.1</td><td class='num strong'>62.9</td></tr>
+<tr><td class='strong'>Celtics</td><td class='num muted'>5-1</td><td class='num'>57.3 - 20.7</td><td class='num'>62.3 - 21.7</td><td class='num strong'>62.3</td></tr>
+<tr><td class='strong'>Spurs</td><td class='num muted'>3-5</td><td class='num'>57.6 - 19.4</td><td class='num'>60.6 - 24.4</td><td class='num strong'>60.6</td></tr>
+<tr><td class='strong'>Rockets</td><td class='num muted'>5-1</td><td class='num'>50.4 - 26.6</td><td class='num'>55.4 - 27.6</td><td class='num strong'>55.4</td></tr>
+<tr><td class='strong'>Timberwolves</td><td class='num muted'>6-3</td><td class='num'>49.4 - 27.6</td><td class='num'>55.4 - 30.6</td><td class='num strong'>55.4</td></tr>
+<tr><td class='strong'>Knicks</td><td class='num muted'>1-7</td><td class='num'>53.0 - 24.0</td><td class='num'>54.0 - 31.0</td><td class='num strong'>54.0</td></tr>
+<tr><td class='strong'>Nuggets</td><td class='num muted'>3-2</td><td class='num'>50.4 - 27.6</td><td class='num'>53.4 - 29.6</td><td class='num strong'>53.4</td></tr>
+<tr><td class='strong'>Hawks</td><td class='num muted'>6-2</td><td class='num'>47.2 - 29.8</td><td class='num'>53.2 - 31.8</td><td class='num strong'>53.2</td></tr>
+<tr><td class='strong'>Lakers</td><td class='num muted'>5-2</td><td class='num'>46.1 - 30.9</td><td class='num'>51.1 - 32.9</td><td class='num strong'>51.1</td></tr>
+<tr><td class='strong'>Cavaliers</td><td class='num muted'>2-3</td><td class='num'>46.6 - 31.4</td><td class='num'>48.6 - 34.4</td><td class='num strong'>48.6</td></tr>
+<tr><td class='strong'>Magic</td><td class='num muted'>4-3</td><td class='num'>44.3 - 32.7</td><td class='num'>48.3 - 35.7</td><td class='num strong'>48.3</td></tr>
+<tr><td class='strong'>Raptors</td><td class='num muted'>4-3</td><td class='num'>43.4 - 33.6</td><td class='num'>47.4 - 36.6</td><td class='num strong'>47.4</td></tr>
+<tr><td class='strong'>76ers</td><td class='num muted'>4-4</td><td class='num'>42.5 - 33.5</td><td class='num'>46.5 - 37.5</td><td class='num strong'>46.5</td></tr>
+<tr><td class='strong'>Hornets</td><td class='num muted'>3-4</td><td class='num'>41.6 - 35.4</td><td class='num'>44.6 - 39.4</td><td class='num strong'>44.6</td></tr>
+<tr><td class='strong'>Clippers</td><td class='num muted'>2-3</td><td class='num'>42.4 - 34.6</td><td class='num'>44.4 - 37.6</td><td class='num strong'>44.4</td></tr>
+<tr><td class='strong'>Trail Blazers</td><td class='num muted'>3-1</td><td class='num'>40.6 - 37.4</td><td class='num'>43.6 - 38.4</td><td class='num strong'>43.6</td></tr>
+<tr><td class='strong'>Suns</td><td class='num muted'>2-5</td><td class='num'>39.1 - 38.9</td><td class='num'>41.1 - 43.9</td><td class='num strong'>41.1</td></tr>
+<tr><td class='strong'>Warriors</td><td class='num muted'>4-4</td><td class='num'>35.3 - 41.7</td><td class='num'>39.3 - 45.7</td><td class='num strong'>39.3</td></tr>
+<tr><td class='strong'>Heat</td><td class='num muted'>2-5</td><td class='num'>35.8 - 41.2</td><td class='num'>37.8 - 46.2</td><td class='num strong'>37.8</td></tr>
+<tr><td class='strong'>Grizzlies</td><td class='num muted'>6-1</td><td class='num'>25.2 - 51.8</td><td class='num'>31.2 - 52.8</td><td class='num strong'>31.2</td></tr>
+<tr><td class='strong'>Bulls</td><td class='num muted'>4-4</td><td class='num'>26.2 - 50.8</td><td class='num'>30.2 - 54.8</td><td class='num strong'>30.2</td></tr>
+<tr><td class='strong'>Pelicans</td><td class='num muted'>3-4</td><td class='num'>26.6 - 50.4</td><td class='num'>29.6 - 54.4</td><td class='num strong'>29.6</td></tr>
+<tr><td class='strong'>Mavericks</td><td class='num muted'>2-5</td><td class='num'>25.2 - 51.8</td><td class='num'>27.2 - 56.8</td><td class='num strong'>27.2</td></tr>
+<tr><td class='strong'>Pacers</td><td class='num muted'>3-4</td><td class='num'>22.6 - 54.4</td><td class='num'>25.6 - 58.4</td><td class='num strong'>25.6</td></tr>
+<tr><td class='strong'>Bucks</td><td class='num muted'>2-6</td><td class='num'>22.9 - 54.1</td><td class='num'>24.9 - 60.1</td><td class='num strong'>24.9</td></tr>
+<tr><td class='strong'>Nets</td><td class='num muted'>3-4</td><td class='num'>17.5 - 59.5</td><td class='num'>20.5 - 63.5</td><td class='num strong'>20.5</td></tr>
+<tr><td class='strong'>Jazz</td><td class='num muted'>3-3</td><td class='num'>17.3 - 59.7</td><td class='num'>20.3 - 62.7</td><td class='num strong'>20.3</td></tr>
+<tr><td class='strong'>Kings</td><td class='num muted'>0-7</td><td class='num'>18.5 - 58.5</td><td class='num'>18.5 - 65.5</td><td class='num strong'>18.5</td></tr>
+<tr><td class='strong'>Wizards</td><td class='num muted'>4-3</td><td class='num'>14.4 - 62.6</td><td class='num'>18.4 - 65.6</td><td class='num strong'>18.4</td></tr>
+</table>
+<h2>Next 12 games (P(home) &middot; est. spread)</h2>
+<table><tr><th>date</th><th>away @ home</th><th>P(home)</th><th class='num'>est. spread</th></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Pacers @ <span class='strong'>Bucks</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:64%"></div></div><span class="pill">64%</span></div></td><td class='num muted'>home +0.0</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Mavericks @ <span class='strong'>Heat</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:77%"></div></div><span class="pill">77%</span></div></td><td class='num muted'>home +3.9</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Grizzlies @ <span class='strong'>Jazz</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:50%"></div></div><span class="pill">50%</span></div></td><td class='num muted'>away 3.5</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Warriors @ <span class='strong'>Nuggets</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:82%"></div></div><span class="pill">82%</span></div></td><td class='num muted'>home +5.7</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Hawks @ <span class='strong'>Rockets</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:69%"></div></div><span class="pill">69%</span></div></td><td class='num muted'>home +1.4</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Bulls @ <span class='strong'>Celtics</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:92%"></div></div><span class="pill">92%</span></div></td><td class='num muted'>home +11.5</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Wizards @ <span class='strong'>Hornets</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:92%"></div></div><span class="pill">92%</span></div></td><td class='num muted'>home +11.3</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Timberwolves @ <span class='strong'>Cavaliers</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:57%"></div></div><span class="pill">57%</span></div></td><td class='num muted'>away 1.7</td></tr>
+<tr><td class='muted'>Mon 10/26</td><td>Suns @ <span class='strong'>Thunder</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:89%"></div></div><span class="pill">89%</span></div></td><td class='num muted'>home +9.1</td></tr>
+<tr><td class='muted'>Tue 10/27</td><td>Trail Blazers @ <span class='strong'>Lakers</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:69%"></div></div><span class="pill">69%</span></div></td><td class='num muted'>home +2.4</td></tr>
+<tr><td class='muted'>Tue 10/27</td><td>Kings @ <span class='strong'>Spurs</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:96%"></div></div><span class="pill">96%</span></div></td><td class='num muted'>home +15.4</td></tr>
+<tr><td class='muted'>Tue 10/27</td><td>Pistons @ <span class='strong'>Knicks</span></td><td><div class="barwrap"><div class="track"><div class="bar" style="width:58%"></div></div><span class="pill">58%</span></div></td><td class='num muted'>away 1.5</td></tr>
+</table>
+<h2>Top 50 players &middot; projected 30-day totals</h2>
+<table><tr><th></th><th>player</th><th>team</th><th class='num'>gp</th><th class='num'>src</th><th class='num'>PTS</th><th class='num'>REB</th><th class='num'>AST</th><th class='num'>STL</th><th class='num'>BLK</th></tr>
+<tr><td class='num muted'>1</td><td class='strong'>Shai Gilgeous-Alexander</td><td class='muted'>OKC</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>348</td><td class='num'>48</td><td class='num'>74</td><td class='num'>15.7</td><td class='num'>8.6</td></tr>
+<tr><td class='num muted'>2</td><td class='strong'>Luka Dončić</td><td class='muted'>LAL</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>345</td><td class='num'>81</td><td class='num'>85</td><td class='num'>17.1</td><td class='num'>5.6</td></tr>
+<tr><td class='num muted'>3</td><td class='strong'>Jaylen Brown</td><td class='muted'>PHI</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>338</td><td class='num'>82</td><td class='num'>60</td><td class='num'>11.9</td><td class='num'>4.5</td></tr>
+<tr><td class='num muted'>4</td><td class='strong'>Tyrese Maxey</td><td class='muted'>PHI</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>328</td><td class='num'>48</td><td class='num'>76</td><td class='num'>21.5</td><td class='num'>9.1</td></tr>
+<tr><td class='num muted'>5</td><td class='strong'>Donovan Mitchell</td><td class='muted'>CLE</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>324</td><td class='num'>52</td><td class='num'>66</td><td class='num'>17.2</td><td class='num'>3.3</td></tr>
+<tr><td class='num muted'>6</td><td class='strong'>Jalen Brunson</td><td class='muted'>NYK</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>319</td><td class='num'>41</td><td class='num'>83</td><td class='num'>9.4</td><td class='num'>1.3</td></tr>
+<tr><td class='num muted'>7</td><td class='strong'>Kevin Durant</td><td class='muted'>HOU</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>319</td><td class='num'>67</td><td class='num'>59</td><td class='num'>9.8</td><td class='num'>11.2</td></tr>
+<tr><td class='num muted'>8</td><td class='strong'>Jamal Murray</td><td class='muted'>DEN</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>316</td><td class='num'>55</td><td class='num'>89</td><td class='num'>10.9</td><td class='num'>4.8</td></tr>
+<tr><td class='num muted'>9</td><td class='strong'>Nikola Jokić</td><td class='muted'>DEN</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>292</td><td class='num'>135</td><td class='num'>112</td><td class='num'>15.0</td><td class='num'>8.7</td></tr>
+<tr><td class='num muted'>10</td><td class='strong'>Anthony Edwards</td><td class='muted'>MIN</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>280</td><td class='num'>50</td><td class='num'>37</td><td class='num'>13.5</td><td class='num'>7.9</td></tr>
+<tr><td class='num muted'>11</td><td class='strong'>Kawhi Leonard</td><td class='muted'>TOR</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>279</td><td class='num'>64</td><td class='num'>36</td><td class='num'>18.8</td><td class='num'>4.3</td></tr>
+<tr><td class='num muted'>12</td><td class='strong'>Paolo Banchero</td><td class='muted'>ORL</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>278</td><td class='num'>105</td><td class='num'>65</td><td class='num'>8.9</td><td class='num'>7.0</td></tr>
+<tr><td class='num muted'>13</td><td class='strong'>Julius Randle</td><td class='muted'>BKN</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>276</td><td class='num'>88</td><td class='num'>66</td><td class='num'>14.3</td><td class='num'>3.0</td></tr>
+<tr><td class='num muted'>14</td><td class='strong'>Desmond Bane</td><td class='muted'>ORL</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>273</td><td class='num'>56</td><td class='num'>56</td><td class='num'>14.3</td><td class='num'>6.1</td></tr>
+<tr><td class='num muted'>15</td><td class='strong'>Victor Wembanyama</td><td class='muted'>SAS</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>272</td><td class='num'>125</td><td class='num'>34</td><td class='num'>11.4</td><td class='num'>33.1</td></tr>
+<tr><td class='num muted'>16</td><td class='strong'>Devin Booker</td><td class='muted'>PHX</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>270</td><td class='num'>41</td><td class='num'>62</td><td class='num'>8.5</td><td class='num'>3.1</td></tr>
+<tr><td class='num muted'>17</td><td class='strong'>Nickeil Alexander-Walker</td><td class='muted'>ATL</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>269</td><td class='num'>44</td><td class='num'>47</td><td class='num'>16.9</td><td class='num'>7.0</td></tr>
+<tr><td class='num muted'>18</td><td class='strong'>Jalen Johnson</td><td class='muted'>ATL</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>269</td><td class='num'>123</td><td class='num'>94</td><td class='num'>14.8</td><td class='num'>5.1</td></tr>
+<tr><td class='num muted'>19</td><td class='strong'>Deni Avdija</td><td class='muted'>POR</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>261</td><td class='num'>74</td><td class='num'>72</td><td class='num'>8.5</td><td class='num'>6.8</td></tr>
+<tr><td class='num muted'>20</td><td class='strong'>James Harden</td><td class='muted'>CLE</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>260</td><td class='num'>53</td><td class='num'>88</td><td class='num'>12.4</td><td class='num'>4.4</td></tr>
+<tr><td class='num muted'>21</td><td class='strong'>Cooper Flagg</td><td class='muted'>DAL</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>256</td><td class='num'>81</td><td class='num'>55</td><td class='num'>14.6</td><td class='num'>11.1</td></tr>
+<tr><td class='num muted'>22</td><td class='strong'>Alperen Sengun</td><td class='muted'>HOU</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>255</td><td class='num'>111</td><td class='num'>77</td><td class='num'>14.8</td><td class='num'>13.4</td></tr>
+<tr><td class='num muted'>23</td><td class='strong'>Amen Thompson</td><td class='muted'>HOU</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>251</td><td class='num'>107</td><td class='num'>73</td><td class='num'>20.7</td><td class='num'>8.4</td></tr>
+<tr><td class='num muted'>24</td><td class='strong'>Karl-Anthony Towns</td><td class='muted'>NYK</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>249</td><td class='num'>147</td><td class='num'>37</td><td class='num'>10.8</td><td class='num'>6.6</td></tr>
+<tr><td class='num muted'>25</td><td class='strong'>Cade Cunningham</td><td class='muted'>DET</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>248</td><td class='num'>58</td><td class='num'>102</td><td class='num'>15.0</td><td class='num'>8.8</td></tr>
+<tr><td class='num muted'>26</td><td class='strong'>Bam Adebayo</td><td class='muted'>MIA</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>243</td><td class='num'>121</td><td class='num'>38</td><td class='num'>14.3</td><td class='num'>8.1</td></tr>
+<tr><td class='num muted'>27</td><td class='strong'>Scottie Barnes</td><td class='muted'>TOR</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>240</td><td class='num'>99</td><td class='num'>79</td><td class='num'>18.9</td><td class='num'>19.2</td></tr>
+<tr><td class='num muted'>28</td><td class='strong'>LaMelo Ball</td><td class='muted'>MIN</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>240</td><td class='num'>58</td><td class='num'>85</td><td class='num'>14.4</td><td class='num'>3.0</td></tr>
+<tr><td class='num muted'>29</td><td class='strong'>Jalen Duren</td><td class='muted'>DET</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>238</td><td class='num'>128</td><td class='num'>24</td><td class='num'>9.9</td><td class='num'>10.3</td></tr>
+<tr><td class='num muted'>30</td><td class='strong'>Trey Murphy III</td><td class='muted'>NOP</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>232</td><td class='num'>62</td><td class='num'>41</td><td class='num'>16.2</td><td class='num'>4.0</td></tr>
+<tr><td class='num muted'>31</td><td class='strong'>Pascal Siakam</td><td class='muted'>IND</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>227</td><td class='num'>64</td><td class='num'>37</td><td class='num'>10.8</td><td class='num'>4.0</td></tr>
+<tr><td class='num muted'>32</td><td class='strong'>Brandon Miller</td><td class='muted'>CHA</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>224</td><td class='num'>55</td><td class='num'>37</td><td class='num'>11.4</td><td class='num'>7.6</td></tr>
+<tr><td class='num muted'>33</td><td class='strong'>CJ McCollum</td><td class='muted'>ATL</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>224</td><td class='num'>40</td><td class='num'>46</td><td class='num'>10.1</td><td class='num'>5.5</td></tr>
+<tr><td class='num muted'>34</td><td class='strong'>DeMar DeRozan</td><td class='muted'>DEN</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>223</td><td class='num'>36</td><td class='num'>50</td><td class='num'>12.6</td><td class='num'>3.6</td></tr>
+<tr><td class='num muted'>35</td><td class='strong'>Ryan Rollins</td><td class='muted'>MIL</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>223</td><td class='num'>59</td><td class='num'>72</td><td class='num'>19.1</td><td class='num'>5.4</td></tr>
+<tr><td class='num muted'>36</td><td class='strong'>Payton Pritchard</td><td class='muted'>BOS</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>223</td><td class='num'>52</td><td class='num'>68</td><td class='num'>9.6</td><td class='num'>1.7</td></tr>
+<tr><td class='num muted'>37</td><td class='strong'>De'Aaron Fox</td><td class='muted'>SAS</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>221</td><td class='num'>45</td><td class='num'>74</td><td class='num'>14.8</td><td class='num'>3.1</td></tr>
+<tr><td class='num muted'>38</td><td class='strong'>Miles Bridges</td><td class='muted'>PHX</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>218</td><td class='num'>75</td><td class='num'>41</td><td class='num'>7.6</td><td class='num'>5.6</td></tr>
+<tr><td class='num muted'>39</td><td class='strong'>Jabari Smith Jr.</td><td class='muted'>HOU</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>211</td><td class='num'>92</td><td class='num'>25</td><td class='num'>9.7</td><td class='num'>12.4</td></tr>
+<tr><td class='num muted'>40</td><td class='strong'>Saddiq Bey</td><td class='muted'>NOP</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>211</td><td class='num'>66</td><td class='num'>30</td><td class='num'>11.3</td><td class='num'>1.2</td></tr>
+<tr><td class='num muted'>41</td><td class='strong'>Keyonte George</td><td class='muted'>UTA</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>210</td><td class='num'>37</td><td class='num'>55</td><td class='num'>10.1</td><td class='num'>2.8</td></tr>
+<tr><td class='num muted'>42</td><td class='strong'>Derrick White</td><td class='muted'>BOS</td><td class='num muted'>4</td><td class='num muted'>marcel</td><td class='num strong'>210</td><td class='num'>56</td><td class='num'>69</td><td class='num'>14.6</td><td class='num'>16.2</td></tr>
+<tr><td class='num muted'>43</td><td class='strong'>Zion Williamson</td><td class='muted'>NOP</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>210</td><td class='num'>58</td><td class='num'>33</td><td class='num'>9.9</td><td class='num'>5.6</td></tr>
+<tr><td class='num muted'>44</td><td class='strong'>VJ Edgecombe</td><td class='muted'>PHI</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>209</td><td class='num'>74</td><td class='num'>55</td><td class='num'>18.6</td><td class='num'>6.8</td></tr>
+<tr><td class='num muted'>45</td><td class='strong'>Jeremiah Fears</td><td class='muted'>NOP</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>203</td><td class='num'>52</td><td class='num'>49</td><td class='num'>16.9</td><td class='num'>5.2</td></tr>
+<tr><td class='num muted'>46</td><td class='strong'>Brandin Podziemski</td><td class='muted'>GSW</td><td class='num muted'>5</td><td class='num muted'>marcel</td><td class='num strong'>197</td><td class='num'>73</td><td class='num'>53</td><td class='num'>15.3</td><td class='num'>2.6</td></tr>
+<tr><td class='num muted'>47</td><td class='strong'>Michael Porter Jr.</td><td class='muted'>BKN</td><td class='num muted'>6</td><td class='num muted'>marcel</td><td class='num strong'>197</td><td class='num'>59</td><td class='num'>26</td><td class='num'>9.2</td><td class='num'>2.6</td></tr>
+<tr><td class='num muted'>48</td><td class='strong'>Stephon Castle</td><td class='muted'>SAS</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>196</td><td class='num'>63</td><td class='num'>87</td><td class='num'>13.5</td><td class='num'>3.3</td></tr>
+<tr><td class='num muted'>49</td><td class='strong'>Mikal Bridges</td><td class='muted'>NYK</td><td class='num muted'>7</td><td class='num muted'>marcel</td><td class='num strong'>196</td><td class='num'>52</td><td class='num'>50</td><td class='num'>17.7</td><td class='num'>10.3</td></tr>
+<tr><td class='num muted'>50</td><td class='strong'>Chet Holmgren</td><td class='muted'>OKC</td><td class='num muted'>3</td><td class='num muted'>marcel</td><td class='num strong'>195</td><td class='num'>101</td><td class='num'>19</td><td class='num'>7.1</td><td class='num'>21.6</td></tr>
+</table>
+<div class='foot'>Team baseline validated walk-forward on 2025-26 holdout (see NOTES.md). Spread is a linear calibration of ELO diff on actual MoV &mdash; not a market line. Player season-start projections use Marcel (regressed 2025-26 totals); per-36 decay takes over once a player has &ge;8 games. No Vegas/balldontlie line available (no API key).</div>
+</body></html>
