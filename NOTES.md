@@ -15,8 +15,8 @@ Keep this current — it exists so no experiment gets re-run.
 - Data cached to `data/raw/*.parquet` (gitignored). Fetch: `uv run python scripts/fetch_seasons.py`
   (2023-24, 2024-25, 2025-26; ~5 min, 91 API calls/season batch)
 - **Holdout discipline: 2025-26 is the clean holdout season. 2024-25 in-sample for diagnosis.**
-  2026-27 (live) is fetched on demand.
-- Today = 2026-10-03. 2025-26 is fully complete (incl. playoffs through 2026-06-13).
+  2026-27 (live) fetched via `scripts/fetch_live.py`.
+- Today = 2026-10-26. 2026-27 in progress (104 games played; 30 teams, 82-86 games each).
 
 ## Layout
 - `src/bang_bang/data/fetch.py` — nba_api fetchers (schedule, team logs, per-team player logs, season stats w/ AGE)
@@ -25,6 +25,13 @@ Keep this current — it exists so no experiment gets re-run.
 - `src/bang_bang/baselines/player_baselines.py` — per36_flat, per36_decay, marcel
 - `src/bang_bang/eval/metrics.py` — acc/brier/logloss/bet-EV (teams); MAE/Spearman (players)
 - `scripts/eval_team.py [season]`, `scripts/eval_player_window.py <season> <prior> <asof>`
+- **Live entry points (added 2026-10-26):**
+  - `scripts/fetch_live.py [season] [refresh]` — fetch an in-progress season (default 2026-27)
+  - `scripts/predict.py [season] [asof]` — A/B-validates team config on the prior season,
+    walks ELO to asof, predicts all remaining games + per-team proj. wins; player 30-day
+    projections (marcel, per36_decay once >=8 games)
+  - `scripts/board.py [season]` — renders `data/predictions/board_{season}.html` widget
+  - Outputs in `data/predictions/` (gitignored): team_preds, team_preds_games, player_preds
 
 ## Baselines — settled results
 
