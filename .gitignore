@@ -6,6 +6,7 @@ __pycache__/
 # data (large, regenerable)
 data/raw/*.parquet
 data/cache/
+data/predictions/
 
 # env / keys
 .env
