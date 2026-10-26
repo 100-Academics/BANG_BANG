@@ -15,8 +15,8 @@ Keep this current — it exists so no experiment gets re-run.
 - Data cached to `data/raw/*.parquet` (gitignored). Fetch: `uv run python scripts/fetch_seasons.py`
   (2023-24, 2024-25, 2025-26; ~5 min, 91 API calls/season batch)
 - **Holdout discipline: 2025-26 is the clean holdout season. 2024-25 in-sample for diagnosis.**
-  2026-27 (live) is fetched on demand.
-- Today = 2026-10-03. 2025-26 is fully complete (incl. playoffs through 2026-06-13).
+  2026-27 (live) fetched via `scripts/fetch_live.py`.
+- Today = 2026-10-26. 2026-27 in progress (104 games played; 30 teams, 82-86 games each).
 
 ## Layout
 - `src/bang_bang/data/fetch.py` — nba_api fetchers (schedule, team logs, per-team player logs, season stats w/ AGE)
