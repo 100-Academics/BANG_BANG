@@ -74,7 +74,7 @@ def fetch_team_logs(season: str, refresh: bool = False) -> pl.DataFrame:
         df = _get(TeamGameLogs, team_id_nullable=int(tid), season_nullable=season)
         frames.append(df.filter(pl.col("AVAILABLE_FLAG").cast(pl.Int32, strict=False) == 1))
         time.sleep(0.4)
-    out = pl.concat(frames, how="diagonal_relaxed")
+    out = pl.concat(frames, how="diagonal_relaxed").unique()  # in-progress seasons double rows
     out.write_parquet(p)
     return out
 
@@ -94,7 +94,7 @@ def fetch_player_logs(season: str, refresh: bool = False) -> pl.DataFrame:
         time.sleep(0.4)
         if (i + 1) % 10 == 0:
             print(f"  player logs: {i+1}/{len(team_ids)} teams done")
-    out = pl.concat(frames, how="diagonal_relaxed")
+    out = pl.concat(frames, how="diagonal_relaxed").unique()  # in-progress seasons double rows
     out.write_parquet(p)
     return out
 
