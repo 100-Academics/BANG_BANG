@@ -28,8 +28,9 @@ Keep this current — it exists so no experiment gets re-run.
 - **Live entry points (added 2026-10-26):**
   - `scripts/fetch_live.py [season] [refresh]` — fetch an in-progress season (default 2026-27)
   - `scripts/predict.py [season] [asof]` — A/B-validates team config on the prior season,
-    walks ELO to asof, predicts all remaining games + per-team proj. wins; player 30-day
-    projections (marcel, per36_decay once >=8 games)
+    deep-carries ELO from the earliest available season, walks to asof, predicts all
+    remaining games + per-team proj. wins; player 30-day projections (marcel, per36_decay
+    once >=8 games, with 50/50 implicit+explicit minutes blend)
   - `scripts/board.py [season]` — renders `data/predictions/board_{season}.html` widget
   - Outputs in `data/predictions/` (gitignored): team_preds, team_preds_games, player_preds
 
@@ -62,6 +63,24 @@ Keep this current — it exists so no experiment gets re-run.
 - **Vegas line baseline NOT yet implemented** — ESPN public API does NOT expose historical
   spreads/totals (scoreboard `odds` empty, boxscore 404s for past games). Options: balldontlie
   (needs key; has odds endpoints), or scraping. **This is the #1 missing baseline.**
+
+### Teams — carry depth + netrtg blend (2026-10-26, scripts/exp_team_blend.py)
+Tuned w_elo × home_offset on 2024-25 in-sample (fresh walk); holdout = 2025-26:
+| arm (2025-26 holdout) | acc | brier | betEV/u |
+|---|---|---|---|
+| ELO fresh, home=80 | 0.671 | 0.2086 | +0.343 |
+| ELO carry 3-season, home=80 | 0.679 | 0.2111 | +0.357 |
+| **ELO carry 3-season, home=100** | **0.678** | 0.2132 | **+0.356** |
+| ELO fresh, home=100 (established) | 0.666 | 0.2116 | +0.333 |
+- **netrtg_pyth blend: NO added value** — w=1.0 (pure ELO) wins tuning on 2024-25
+  (+0.315/u vs best blend +0.306/u) and every blended arm loses to pure ELO on the
+  holdout. Do not re-try a linear ELO+netrtg blend.
+- **home=80: NOT shipped** — strong in-sample (home=80 +0.315 vs home=100 +0.280 on 2024-25)
+  but a tie on holdout (+0.357 vs +0.356, ~1 game) → "basically the same" → keep +100.
+- **Deep carry: SHIPPED** — walking ELO from the earliest available season
+  (2023-24→2024-25→2025-26) beats the 2-season carry above on the same holdout:
+  +0.356 vs +0.344 betEV (acc 0.678 vs 0.672). predict.py now deep-carries for
+  every target (generalizes to future years).
 
 ### Players (30-day component totals; window eval, MAE + Spearman ranking)
 2025-26, asof 2025-12-01 (n≈330 matched):
@@ -110,7 +129,10 @@ per36_decay best-or-tie on MAE and best Spearman in all 3 windows. Marcel compet
   `/c/Users/steve/.local/bin/uv`.
 
 ## NOT yet tried (candidate next experiments)
-1. **Vegas line baseline** (balldontlie w/ key) — required before claiming "beats Vegas".
+1. **Vegas line baseline** — **parked 2026-10-26**: balldontlie key is in `.env`
+   (BALLDONTLIE_API_KEY, free tier verified working) but odds/props endpoints are
+   GOAT-tier only (401). ESPN scoreboard carries NO odds (even live). User chose to skip
+   for now; requires either GOAT upgrade or a scraper before claiming "beats Vegas".
 2. Decay half-life sweep (7/10/14/21/28 days) on the held-out window.
 3. Minutes model as an explicit target (injury/rest-based) instead of trailing minutes.
 4. O/U win-rate metric on player totals (needs totals lines → same balldontlie dependency).
