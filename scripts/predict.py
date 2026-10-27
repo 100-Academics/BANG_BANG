@@ -112,12 +112,27 @@ def _score(tr_factory, games: pl.DataFrame) -> dict:
     return team_outcome_metrics(g, "p")
 
 
-def _carry_snapshot(season: str, nba_ids: set[int] | None) -> EloTracker:
-    games = build_games(season)
-    if nba_ids is not None:
-        games = _filter_nba(games, nba_ids)
+def _available_seasons() -> list[str]:
+    """Seasons with a built games.parquet, oldest first."""
+    return sorted(p.name.split("_")[0] for p in RAW_DIR.glob("*_games.parquet"))
+
+
+def _deep_carry(target_season: str, use_filter: bool) -> EloTracker:
+    """Walk ELO through every available season before target_season, oldest first.
+
+    2026-10-26: 3-season carry beats 2-season carry on the 2025-26 holdout
+    (+0.356 vs +0.344 betEV) — see NOTES.md. So the live walk starts from the
+    earliest available season, not just the pre-prior."""
     tr = EloTracker()
-    _walk(tr, games)
+    for s in _available_seasons():
+        if s >= target_season:
+            break
+        games = build_games(s)
+        if use_filter:
+            sched_p = RAW_DIR / f"{s}_schedule.parquet"
+            if sched_p.exists():
+                games = _filter_nba(games, _nba_team_ids(s))
+        _walk(tr, games)
     return tr
 
 
@@ -151,9 +166,9 @@ def main(season: str, asof: datetime.date | None = None):
         "fresh+unfiltered": (lambda: EloTracker(), prior_games),
         "fresh+filtered": (lambda: EloTracker(), _filter_nba(prior_games, nba_prior)),
     }
-    if have_pre:
-        snap_u = _carry_snapshot(pre_prior, None)
-        snap_f = _carry_snapshot(pre_prior, nba_pre)
+    if len(_available_seasons()) > 1:
+        snap_u = _deep_carry(prior, use_filter=False)
+        snap_f = _deep_carry(prior, use_filter=True)
         arms["carry+unfiltered"] = (lambda s=snap_u: copy.deepcopy(s), prior_games)
         arms["carry+filtered"] = (lambda s=snap_f: copy.deepcopy(s),
                                   _filter_nba(prior_games, nba_prior))
@@ -255,7 +270,7 @@ def main(season: str, asof: datetime.date | None = None):
     active = set(pg["player_id"].to_list())
 
     marcel = predict_marcel(pg, prev_stats, asof).filter(pl.col("player_id").is_in(active))
-    decay = predict_per36_decay(pg, asof, half_life=14.0)  # needs >=8 games
+    decay = predict_per36_decay(pg, asof, half_life=28.0)  # needs >=8 games; hl from 2026-10-26 sweep
 
     if len(decay):
         base = marcel.join(
