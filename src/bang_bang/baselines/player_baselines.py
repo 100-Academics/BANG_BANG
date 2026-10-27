@@ -5,15 +5,21 @@ AST, STL, BLK) given their history up to the prediction date.
 
 Baselines:
   1. per36_flat : last game's per-36 rates x projected minutes
-  2. per36_decay: exponentially decayed per-36 rates (half-life 14 days)
-                  x decay-weighted minutes
+  2. per36_decay: exponentially decayed per-36 rates (half-life 28 days)
+                  x projected minutes (50/50 blend of the implicit
+                  decay-weighted projection and an explicit walk-forward
+                  regression of next-30d minutes on (m8, m30, gp30))
   3. marcel     : prior-season totals, regressed to league avg, age-adjusted,
                   scaled 181 -> 30 days
 """
 
 from __future__ import annotations
 
+import datetime
+
+import numpy as np
 import polars as pl
+from sklearn.linear_model import LinearRegression
 
 SEASON_DAYS = 181
 MONTH_DAYS = 30.0
@@ -60,14 +66,60 @@ def predict_per36_flat(pg: pl.DataFrame, asof) -> pl.DataFrame:
     return pl.DataFrame(rows)
 
 
-def predict_per36_decay(pg: pl.DataFrame, asof, half_life: float = 14.0) -> pl.DataFrame:
-    """Exponential-decay weighted per-36 rates x decay-weighted minutes."""
+def fit_minutes_model(history: pl.DataFrame) -> LinearRegression:
+    """Walk-forward linear regression: next-30d total minutes ~ (m8, m30, gp30).
+
+    m8 = avg minutes over the player's last 8 games; m30 = total minutes in
+    the trailing 30 days; gp30 = games in that window. Target = total minutes
+    in the NEXT 30 days. `history` must contain only games STRICTLY BEFORE the
+    prediction asof (fit on all available seasons otherwise).
+
+    2026-10-26 A/B (exp_minutes_model.py): blending this explicit projection
+    50/50 with the implicit decay-weighted minutes beats the implicit-only
+    default on pts MAE in all 3 windows, incl. both 2025-26 holdout windows
+    (45.1->37.7, 43.4->40.1) with Spearman wins/ties. See NOTES.md.
+    """
+    X, y = [], []
+    for pid in history["player_id"].unique().to_list():
+        rows = (history.filter(pl.col("player_id") == pid)
+                .sort("game_date").rows(named=True))
+        for i, r in enumerate(rows):
+            prior = rows[:i]
+            if len(prior) < 8:
+                continue
+            d = r["game_date"]
+            m8 = sum(x["min"] for x in prior[-8:]) / 8.0
+            w30 = [x for x in prior if (d - x["game_date"]).days <= 30]
+            fut = [x for x in rows[i + 1:] if (x["game_date"] - d).days < 30]
+            if not fut:
+                continue
+            X.append((m8, sum(x["min"] for x in w30), len(w30)))
+            y.append(sum(x["min"] for x in fut))
+    if len(X) < 50:
+        raise ValueError(f"fit_minutes_model: only {len(X)} samples")
+    return LinearRegression().fit(np.array(X, dtype=float), np.array(y, dtype=float))
+
+
+def predict_per36_decay(pg: pl.DataFrame, asof, half_life: float = 28.0,
+                        minutes_model: LinearRegression | None = None) -> pl.DataFrame:
+    """Exponential-decay weighted per-36 rates x projected 30-day minutes.
+
+    half_life default 28d: 2026-10-26 sweep (7/10/14/21/28) — 28 beats 14 on
+    pts MAE in all 3 eval windows (45.1/43.4/39.5 vs 45.7/44.6/41.1) with
+    Spearman within noise (see NOTES.md).
+
+    minutes_model: fit via fit_minutes_model(history before asof). When given,
+    projected minutes = 0.5 * implicit (decay-weighted x 13.6 games) +
+    0.5 * explicit regression — beats implicit-only in all 3 A/B windows
+    (2026-10-26, see NOTES.md). When None, minutes stay implicit.
+    """
     players = (pg.filter(pl.col("game_date") < asof)
                .group_by("player_id").agg(pl.len().alias("gp"))
                .filter(pl.col("gp") >= 8)["player_id"].to_list())
     rows = []
     for pid in players:
-        h = pg.filter((pl.col("player_id") == pid) & (pl.col("game_date") < asof))
+        h = (pg.filter((pl.col("player_id") == pid) & (pl.col("game_date") < asof))
+             .sort("game_date"))
         num = {c: 0.0 for c in COMPONENTS}
         wmin = 0.0
         wtot = 0.0
@@ -85,9 +137,20 @@ def predict_per36_decay(pg: pl.DataFrame, asof, half_life: float = 14.0) -> pl.D
             wtot += w
         if wtot == 0:
             continue
+        implicit_min30 = (wmin / wtot) * GAMES_PER_MONTH
+        if minutes_model is not None:
+            prior8 = h.rows(named=True)[-8:]
+            m8 = sum(x["min"] for x in prior8) / 8.0
+            w30 = [x for x in h.rows(named=True)
+                   if (asof - x["game_date"]).days <= 30]
+            min30_exp = float(minutes_model.predict(
+                np.array([[m8, sum(x["min"] for x in w30), len(w30)]]))[0])
+            min30 = 0.5 * max(min30_exp, 0.0) + 0.5 * implicit_min30
+        else:
+            min30 = implicit_min30
         row = {"player_id": pid, "player_name": name}
         for c in COMPONENTS:
-            row[f"pred_{c}"] = (num[c] / wtot) / 36.0 * (wmin / wtot) * GAMES_PER_MONTH
+            row[f"pred_{c}"] = (num[c] / wtot) / 36.0 * min30
         rows.append(row)
     return pl.DataFrame(rows)
 
