@@ -110,9 +110,13 @@ per36_decay best-or-tie on MAE and best Spearman in all 3 windows. Marcel compet
   `/c/Users/steve/.local/bin/uv`.
 
 ## NOT yet tried (candidate next experiments)
-1. **Vegas line baseline** (balldontlie w/ key) — required before claiming "beats Vegas".
+1. **Vegas line baseline** — **parked 2026-10-26**: balldontlie key is in `.env`
+   (BALLDONTLIE_API_KEY, free tier verified working) but odds/props endpoints are
+   GOAT-tier only (401). ESPN scoreboard carries NO odds (even live). User chose to skip
+   for now; requires either GOAT upgrade or a scraper before claiming "beats Vegas".
 2. Decay half-life sweep (7/10/14/21/28 days) on the held-out window.
 3. Minutes model as an explicit target (injury/rest-based) instead of trailing minutes.
+5. Team: blending ELO + net-rating Pythagorean; home advantage tuned from data.
 4. O/U win-rate metric on player totals (needs totals lines → same balldontlie dependency).
 5. Team: blending ELO + net-rating Pythagorean; home advantage tuned from data.
 6. Postseason series model (separate technique per AGENTS.md).
