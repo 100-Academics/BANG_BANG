@@ -28,8 +28,9 @@ Keep this current — it exists so no experiment gets re-run.
 - **Live entry points (added 2026-10-26):**
   - `scripts/fetch_live.py [season] [refresh]` — fetch an in-progress season (default 2026-27)
   - `scripts/predict.py [season] [asof]` — A/B-validates team config on the prior season,
-    walks ELO to asof, predicts all remaining games + per-team proj. wins; player 30-day
-    projections (marcel, per36_decay once >=8 games)
+    deep-carries ELO from the earliest available season, walks to asof, predicts all
+    remaining games + per-team proj. wins; player 30-day projections (marcel, per36_decay
+    once >=8 games, with 50/50 implicit+explicit minutes blend)
   - `scripts/board.py [season]` — renders `data/predictions/board_{season}.html` widget
   - Outputs in `data/predictions/` (gitignored): team_preds, team_preds_games, player_preds
 
@@ -110,7 +111,10 @@ per36_decay best-or-tie on MAE and best Spearman in all 3 windows. Marcel compet
   `/c/Users/steve/.local/bin/uv`.
 
 ## NOT yet tried (candidate next experiments)
-1. **Vegas line baseline** (balldontlie w/ key) — required before claiming "beats Vegas".
+1. **Vegas line baseline** — **parked 2026-10-26**: balldontlie key is in `.env`
+   (BALLDONTLIE_API_KEY, free tier verified working) but odds/props endpoints are
+   GOAT-tier only (401). ESPN scoreboard carries NO odds (even live). User chose to skip
+   for now; requires either GOAT upgrade or a scraper before claiming "beats Vegas".
 2. Decay half-life sweep (7/10/14/21/28 days) on the held-out window.
 3. Minutes model as an explicit target (injury/rest-based) instead of trailing minutes.
 4. O/U win-rate metric on player totals (needs totals lines → same balldontlie dependency).
