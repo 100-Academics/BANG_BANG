@@ -5,15 +5,21 @@ AST, STL, BLK) given their history up to the prediction date.
 
 Baselines:
   1. per36_flat : last game's per-36 rates x projected minutes
-  2. per36_decay: exponentially decayed per-36 rates (half-life 14 days)
-                  x decay-weighted minutes
+  2. per36_decay: exponentially decayed per-36 rates (half-life 28 days)
+                  x projected minutes (50/50 blend of the implicit
+                  decay-weighted projection and an explicit walk-forward
+                  regression of next-30d minutes on (m8, m30, gp30))
   3. marcel     : prior-season totals, regressed to league avg, age-adjusted,
                   scaled 181 -> 30 days
 """
 
 from __future__ import annotations
 
+import datetime
+
+import numpy as np
 import polars as pl
+from sklearn.linear_model import LinearRegression
 
 SEASON_DAYS = 181
 MONTH_DAYS = 30.0
@@ -60,8 +66,12 @@ def predict_per36_flat(pg: pl.DataFrame, asof) -> pl.DataFrame:
     return pl.DataFrame(rows)
 
 
-def predict_per36_decay(pg: pl.DataFrame, asof, half_life: float = 14.0) -> pl.DataFrame:
-    """Exponential-decay weighted per-36 rates x decay-weighted minutes."""
+def predict_per36_decay(pg: pl.DataFrame, asof, half_life: float = 28.0) -> pl.DataFrame:
+    """Exponential-decay weighted per-36 rates x decay-weighted minutes.
+
+    half_life default 28d: 2026-10-26 sweep (7/10/14/21/28) — 28 beats 14 on
+    pts MAE in all 3 eval windows (45.1/43.4/39.5 vs 45.7/44.6/41.1) with
+    Spearman within noise (see NOTES.md)."""
     players = (pg.filter(pl.col("game_date") < asof)
                .group_by("player_id").agg(pl.len().alias("gp"))
                .filter(pl.col("gp") >= 8)["player_id"].to_list())
