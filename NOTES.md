@@ -28,8 +28,9 @@ Keep this current — it exists so no experiment gets re-run.
 - **Live entry points (added 2026-10-26):**
   - `scripts/fetch_live.py [season] [refresh]` — fetch an in-progress season (default 2026-27)
   - `scripts/predict.py [season] [asof]` — A/B-validates team config on the prior season,
-    walks ELO to asof, predicts all remaining games + per-team proj. wins; player 30-day
-    projections (marcel, per36_decay once >=8 games)
+    deep-carries ELO from the earliest available season, walks to asof, predicts all
+    remaining games + per-team proj. wins; player 30-day projections (marcel, per36_decay
+    once >=8 games, with 50/50 implicit+explicit minutes blend)
   - `scripts/board.py [season]` — renders `data/predictions/board_{season}.html` widget
   - Outputs in `data/predictions/` (gitignored): team_preds, team_preds_games, player_preds
 
@@ -63,6 +64,24 @@ Keep this current — it exists so no experiment gets re-run.
   spreads/totals (scoreboard `odds` empty, boxscore 404s for past games). Options: balldontlie
   (needs key; has odds endpoints), or scraping. **This is the #1 missing baseline.**
 
+### Teams — carry depth + netrtg blend (2026-10-26, scripts/exp_team_blend.py)
+Tuned w_elo × home_offset on 2024-25 in-sample (fresh walk); holdout = 2025-26:
+| arm (2025-26 holdout) | acc | brier | betEV/u |
+|---|---|---|---|
+| ELO fresh, home=80 | 0.671 | 0.2086 | +0.343 |
+| ELO carry 3-season, home=80 | 0.679 | 0.2111 | +0.357 |
+| **ELO carry 3-season, home=100** | **0.678** | 0.2132 | **+0.356** |
+| ELO fresh, home=100 (established) | 0.666 | 0.2116 | +0.333 |
+- **netrtg_pyth blend: NO added value** — w=1.0 (pure ELO) wins tuning on 2024-25
+  (+0.315/u vs best blend +0.306/u) and every blended arm loses to pure ELO on the
+  holdout. Do not re-try a linear ELO+netrtg blend.
+- **home=80: NOT shipped** — strong in-sample (home=80 +0.315 vs home=100 +0.280 on 2024-25)
+  but a tie on holdout (+0.357 vs +0.356, ~1 game) → "basically the same" → keep +100.
+- **Deep carry: SHIPPED** — walking ELO from the earliest available season
+  (2023-24→2024-25→2025-26) beats the 2-season carry above on the same holdout:
+  +0.356 vs +0.344 betEV (acc 0.678 vs 0.672). predict.py now deep-carries for
+  every target (generalizes to future years).
+
 ### Players (30-day component totals; window eval, MAE + Spearman ranking)
 2025-26, asof 2025-12-01 (n≈330 matched):
 | baseline | pts MAE | pts ρ | reb MAE | ast MAE |
@@ -82,7 +101,28 @@ Multi-window stability (confirms the default):
 | 2024-25 @ 2024-12-01 | 61.9 / ρ0.695 | 41.1 / ρ0.839 | **39.9** / ρ0.764 |
 
 per36_decay best-or-tie on MAE and best Spearman in all 3 windows. Marcel competitive on
-2024-25 only (MAE 39.9 vs 41.1 but ρ 0.764 vs 0.839). Default stays per36_decay (hl=14d).
+2024-25 only (MAE 39.9 vs 41.1 but ρ 0.764 vs 0.839). Default stays per36_decay.
+
+### Players — half-life sweep + minutes model (2026-10-26)
+`scripts/exp_decay_sweep.py` — pts MAE improves monotonically with half-life in all 3
+windows: hl=14 45.7/44.6/41.1 → hl=28 45.1/43.4/39.5; Spearman within noise.
+**SHIPPED hl=28** (predict_per36_decay default).
+
+`scripts/exp_minutes_model.py` — explicit walk-forward regression of next-30d total
+minutes on (m8, m30, gp30), fit strictly on pre-asof history (all available prior
+seasons + current season before asof; ~54-60k samples), vs implicit minutes
+(decay-weighted trailing × 13.6 games/30d). Per-36 rates identical (hl=28):
+| window | implicit pts MAE | explicit | 50/50 blend |
+|---|---|---|---|
+| 2025-26 @ 2025-12-01 (HOLDOUT) | 45.1 | 36.6 | **37.7** |
+| 2025-26 @ 2026-01-15 (HOLDOUT) | 43.4 | 43.9 | **40.1** |
+| 2024-25 @ 2024-12-01 (in-sample) | 39.5 | 30.2 | **30.7** |
+- **50/50 minutes blend: SHIPPED** — beats implicit on pts MAE in ALL 3 windows
+  (incl. both holdout), Spearman wins/ties. Explicit alone wins 2/3 (loses 1.2% in the
+  mid-Jan holdout window) → the blend is the robust choice. Wired into
+  predict_per36_decay(minutes_model=fit_minutes_model(...)) in predict.py.
+- Explicit minutes with <30k training samples (e.g. 2024-25 window trained on one prior
+  season only) is unreliable (MAE 70.3) — always fit on >=2 full seasons.
 
 ## Data hygiene (found 2026-10-26, all handled in fetch.py/build.py/predict.py)
 - **nba_api returns exact-duplicate rows for in-progress seasons** (2026-27: every team-log
@@ -110,13 +150,15 @@ per36_decay best-or-tie on MAE and best Spearman in all 3 windows. Marcel compet
   `/c/Users/steve/.local/bin/uv`.
 
 ## NOT yet tried (candidate next experiments)
-1. **Vegas line baseline** (balldontlie w/ key) — required before claiming "beats Vegas".
-2. Decay half-life sweep (7/10/14/21/28 days) on the held-out window.
-3. Minutes model as an explicit target (injury/rest-based) instead of trailing minutes.
-4. O/U win-rate metric on player totals (needs totals lines → same balldontlie dependency).
-5. Team: blending ELO + net-rating Pythagorean; home advantage tuned from data.
-6. Postseason series model (separate technique per AGENTS.md).
-7. DunksAndThrees EPM / Cleaning The Glass per-36 as *features* for a regression model.
+1. **Vegas line baseline** — **parked 2026-10-26**: balldontlie key is in `.env`
+   (BALLDONTLIE_API_KEY, free tier verified working) but odds/props endpoints are
+   GOAT-tier only (401). ESPN scoreboard carries NO odds (even live). User chose to skip
+   for now; requires either GOAT upgrade or a scraper before claiming "beats Vegas".
+2. O/U win-rate metric on player totals (needs totals lines → same balldontlie dependency).
+3. Postseason series model (separate technique per AGENTS.md).
+4. DunksAndThrees EPM / Cleaning The Glass per-36 as *features* for a regression model.
+(Tried & settled 2026-10-26: decay half-life sweep → hl=28; explicit minutes model →
+50/50 blend shipped; ELO+netrtg blend → no added value; home-offset tuning → kept +100.)
 
 ## Conventions
 - A baseline ships only if it beats the current default on held-out data; "basically the same" → keep the simpler one.
