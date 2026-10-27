@@ -255,7 +255,7 @@ def main(season: str, asof: datetime.date | None = None):
     active = set(pg["player_id"].to_list())
 
     marcel = predict_marcel(pg, prev_stats, asof).filter(pl.col("player_id").is_in(active))
-    decay = predict_per36_decay(pg, asof, half_life=14.0)  # needs >=8 games
+    decay = predict_per36_decay(pg, asof, half_life=28.0)  # needs >=8 games; hl from 2026-10-26 sweep
 
     if len(decay):
         base = marcel.join(
